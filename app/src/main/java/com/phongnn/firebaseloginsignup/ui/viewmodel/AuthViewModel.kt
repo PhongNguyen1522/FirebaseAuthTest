@@ -28,11 +28,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private var _signedUpInUser = MutableLiveData<User?>()
     val signedUpInUser: LiveData<User?> = _signedUpInUser
 
-    init {
-        usersList.add(User("phongnn1@gmail.com", "123456"))
-        usersList.add(User("phongnn2@gmail.com", "123456"))
-    }
-
     fun getCurrentUser(): String {
         val user = firebaseAuth.currentUser
         return user?.email.toString()
