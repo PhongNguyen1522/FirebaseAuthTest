@@ -16,7 +16,7 @@
         android:background="@drawable/unsplash02"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        tools:context=".ui.fragment.SignInFragment">
+        tools:context=".ui.fragment.authen.SignInFragment">
 
         <TextView
             android:id="@+id/tvWelcome"

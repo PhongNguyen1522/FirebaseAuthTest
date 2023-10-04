@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="authViewModel"
             type="com.phongnn.firebaseloginsignup.ui.viewmodel.AuthViewModel" />
@@ -12,31 +13,40 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:background="@drawable/unplash01"
-        tools:context=".ui.fragment.HomeFragment">
+        android:fitsSystemWindows="true"
+        tools:context=".ui.fragment.authen.HomeFragment">
 
         <TextView
             android:id="@+id/tvCurrentUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{authViewModel.currentUser}"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="300dp"
-            />
+            android:text="@{authViewModel.currentUser}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnSignOut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign-out"
-            android:onClick="@{() -> authViewModel.signOut()}"
             android:layout_marginTop="32dp"
+            android:onClick="@{() -> authViewModel.signOut()}"
+            android:text="Sign-out"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCurrentUser" />
+
+        <Button
+            android:id="@+id/btnOpenComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="go to comment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSignOut" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

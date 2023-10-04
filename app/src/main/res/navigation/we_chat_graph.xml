@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/we_chat_graph"
+    app:startDestination="@id/homeCommentFragment">
+
+    <fragment
+        android:id="@+id/homeCommentFragment"
+        android:name="com.phongnn.firebaseloginsignup.ui.fragment.comment.HomeCommentFragment"
+        android:label="fragment_home_comment"
+        tools:layout="@layout/fragment_home_comment" >
+        <action
+            android:id="@+id/action_homeCommentFragment_to_detailCommentFragment"
+            app:destination="@id/detailCommentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailCommentFragment"
+        android:name="com.phongnn.firebaseloginsignup.ui.fragment.comment.DetailCommentFragment"
+        android:label="fragment_detail_comment"
+        tools:layout="@layout/fragment_detail_comment" >
+        <action
+            android:id="@+id/action_detailCommentFragment_to_homeCommentFragment"
+            app:destination="@id/homeCommentFragment" />
+    </fragment>
+</navigation>

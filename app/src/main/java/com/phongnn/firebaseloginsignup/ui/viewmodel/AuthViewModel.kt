@@ -8,7 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import com.phongnn.firebaseloginsignup.data.User
 
 private const val MY_TAG = "PHONGNN4"
@@ -16,10 +16,16 @@ private const val MY_TAG = "PHONGNN4"
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val database: DatabaseReference =
+        FirebaseDatabase.getInstance().getReference("users")
 
-    private val usersList = mutableListOf<User>()
+    // Create a live data to observe all users list
+    private var _returnedUsers = MutableLiveData<List<User>?>()
+    val returnedUsers: LiveData<List<User>?> = _returnedUsers
+
 
     val emailLiveData = MutableLiveData<String?>()
+    val userNameLiveData = MutableLiveData<String?>()
     val passwordLiveData = MutableLiveData<String?>()
 
     private var _loggedInUser = MutableLiveData<User?>()
@@ -29,8 +35,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val signedUpInUser: LiveData<User?> = _signedUpInUser
 
     fun getCurrentUser(): String {
-        val user = firebaseAuth.currentUser
-        return user?.email.toString()
+        val firebaseUser = firebaseAuth.currentUser
+        return firebaseUser?.email.toString()
     }
 
     fun signUp() {
@@ -39,8 +45,20 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             firebaseAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        _signedUpInUser.value = user
-                        showToast("Sign-up Success!")
+                        // Save user name to realtime database
+                        val pushUserKey = database.push().key
+                        pushUserKey?.let { key ->
+                            database.child(key).setValue(user)
+                                .addOnSuccessListener {
+                                    _signedUpInUser.value = user
+                                    Toast.makeText(getApplication(), "Create and Save Account Successfully", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                .addOnFailureListener { error ->
+                                    _signedUpInUser.value = null
+                                    Toast.makeText(getApplication(), error.message, Toast.LENGTH_SHORT).show()
+                                }
+                        }
                     } else {
                         _signedUpInUser.value = null
                         showToast("Sign-up Failed!")
@@ -83,9 +101,37 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
+    fun loadUsers() {
+        val usersList = mutableListOf<User>()
+        // Attach a ValueEventListener to get updates from the "users" node
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                // Clear the existing list
+                usersList.clear()
+                // Iterate through the children of the "users" node
+                for (userSnapShot in snapshot.children) {
+                    val returnedUser = userSnapShot.getValue(User::class.java)
+                    returnedUser?.let {
+                        usersList.add(it)
+                    }
+                }
+                _returnedUsers.value = usersList
+            }
+            override fun onCancelled(error: DatabaseError) {
+                _returnedUsers.value = null
+                Toast.makeText(getApplication(), error.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // Validate Function
     private fun checkInputForm(): User? {
         val email = emailLiveData.value
         var isValidEmail = isEmailValid(email)
+
+        val userName = userNameLiveData.value
+        var isUserNameValid = isValidUsername(userName)
 
         val password = passwordLiveData.value
         var isValidPassword = isPasswordValid(password)
@@ -94,13 +140,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             if (!isValidEmail) {
                 showToast("Invalid Email!")
             }
+            if (!isUserNameValid) {
+                showToast("Invalid User Name")
+            }
             if (!isValidPassword) {
                 showToast("Invalid Password!")
             }
             return null
         }
-
-        return User(email, password)
+        return User(email, userName, password, "null")
     }
 
     private fun isEmailValid(email: String?): Boolean {
@@ -108,6 +156,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 return true
             }
+        }
+        return false
+    }
+
+    private fun isValidUsername(username: String?): Boolean {
+        // Define your validation criteria here
+        val regex = Regex("^[a-zA-Z][a-zA-Z0-9_]*$")
+        if(username != null) {
+            return regex.matches(username)
         }
         return false
     }

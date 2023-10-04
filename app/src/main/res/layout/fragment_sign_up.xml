@@ -15,14 +15,14 @@
         android:layout_height="match_parent"
         android:background="@drawable/unsplash02"
         android:fitsSystemWindows="true"
-        tools:context=".ui.fragment.SignUpFragment">
+        tools:context=".ui.fragment.authen.SignUpFragment">
 
         <TextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginTop="100dp"
             android:text="SIGN UP"
             android:textColor="@color/white"
             android:textSize="40sp"
@@ -59,7 +59,29 @@
                 android:background="@null"
                 android:hint="Email"
                 android:text="@={authViewModel.emailLiveData}"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
+                android:textColorHint="@android:color/background_light"
+                android:textSize="20sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etUserNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etEmailLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="User Name"
+                android:text="@={authViewModel.userNameLiveData}"
+                android:textColor="@color/black"
                 android:textColorHint="@android:color/background_light"
                 android:textSize="20sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +95,7 @@
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEmailLayout"
+            app:layout_constraintTop_toBottomOf="@+id/etUserNameLayout"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -84,7 +106,7 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:text="@={authViewModel.passwordLiveData}"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textColorHint="@android:color/background_light"
                 android:textSize="20sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -95,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:backgroundTint="#0D0E24"
-            android:onClick="@{() -> authViewModel}"
+            android:onClick="@{() -> authViewModel.signUp()}"
             android:text="Sign-up"
             android:textSize="32sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="#00FFFFFF"
-            android:text="Go to Sign-up"
+            android:text="Go to Sign-in"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="20sp"

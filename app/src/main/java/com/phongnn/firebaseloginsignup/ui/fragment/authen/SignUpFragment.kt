@@ -1,22 +1,21 @@
-package com.phongnn.firebaseloginsignup.ui.fragment
+package com.phongnn.firebaseloginsignup.ui.fragment.authen
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.phongnn.firebaseloginsignup.R
-import com.phongnn.firebaseloginsignup.databinding.FragmentSignInBinding
+import com.phongnn.firebaseloginsignup.databinding.FragmentSignUpBinding
 import com.phongnn.firebaseloginsignup.ui.viewmodel.AuthViewModel
 
+class SignUpFragment : Fragment() {
 
-class SignInFragment : Fragment() {
-
-    private lateinit var binding: FragmentSignInBinding
+    private lateinit var binding: FragmentSignUpBinding
     private lateinit var authViewModel: AuthViewModel
 
     override fun onCreateView(
@@ -24,16 +23,15 @@ class SignInFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_in, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false)
 
         authViewModel = ViewModelProvider(requireActivity())[AuthViewModel::class.java]
         binding.authViewModel = authViewModel
-        // For liveData to be observed
         binding.lifecycleOwner = viewLifecycleOwner
 
-        authViewModel.loggedInUser.observe(viewLifecycleOwner) { user ->
+        authViewModel.signedUpInUser.observe(viewLifecycleOwner) {user ->
             if (user != null) {
-                findNavController().navigate(R.id.action_signInFragment_to_homeFragment)
+                findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
                 binding.apply {
                     etEmail.text = null
                     etPassword.text = null
@@ -41,9 +39,11 @@ class SignInFragment : Fragment() {
             }
         }
 
-        binding.btnGoToSignUp.setOnClickListener {
-            findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
+        binding.btnGoToSignIn.setOnClickListener {
+            findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
         }
+
+        activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         return binding.root
     }
