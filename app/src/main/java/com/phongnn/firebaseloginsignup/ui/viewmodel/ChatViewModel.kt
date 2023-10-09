@@ -69,18 +69,21 @@ class ChatViewModel(
 
                     // Add the comment to the list
                     comment?.let {
-                        if (it.senderEmail.equals(senderEmail, false)
-                            && it.receiverEmail.equals(receiveEmail, false)
-                        ) {
-                            commentsList.add(it)
-                        } else if (it.senderEmail.equals(receiveEmail, false)
-                            && it.receiverEmail.equals(senderEmail, false)
-                        ) {
-                            commentsList.add(it)
-                        } else {
-                            commentsList.clear()
+                        when {
+                            it.senderEmail.equals(senderEmail, ignoreCase = false) &&
+                                    it.receiverEmail.equals(receiveEmail, ignoreCase = false) ->
+                                commentsList.add(it)
+
+                            it.senderEmail.equals(receiveEmail, ignoreCase = false) &&
+                                    it.receiverEmail.equals(senderEmail, ignoreCase = false) ->
+                                commentsList.add(it)
+
+                            else -> {
+                                // Do nothing
+                            }
                         }
                     }
+
                 }
                 _returnedComments.value = commentsList
             }
@@ -93,7 +96,7 @@ class ChatViewModel(
         })
     }
 
-    fun getCurrentTime(): String {
+    private fun getCurrentTime(): String {
         val currentTime = LocalTime.now()
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         return currentTime.format(formatter)
