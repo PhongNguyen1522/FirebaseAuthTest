@@ -1,6 +1,7 @@
 package com.phongnn.firebaseloginsignup.ui.viewmodel
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -56,6 +57,7 @@ class ChatViewModel(
 
     fun loadMessages(senderEmail: String, receiveEmail: String) {
         val commentsList = mutableListOf<Comment>()
+        _returnedComments.value = null
         // Attach a ValueEventListener to get updates from the "comments" node
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -83,7 +85,6 @@ class ChatViewModel(
                             }
                         }
                     }
-
                 }
                 _returnedComments.value = commentsList
             }
@@ -95,6 +96,40 @@ class ChatViewModel(
 
         })
     }
+
+    fun getAllMessagesList(currentEmail: String) {
+        val commentsList = mutableListOf<Comment>()
+        _returnedComments.value = null
+        // Attach a ValueEventListener to get updates from the "comments" node
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Clear the existing list
+                commentsList.clear()
+
+                // Iterate through the children of the "comments" node
+                for (commentSnapshot in snapshot.children) {
+                    // Convert each child to a Comment object
+                    val comment = commentSnapshot.getValue(Comment::class.java)
+                    if (comment != null) {
+                        if (comment.senderEmail.equals(currentEmail, false)
+                            || comment.receiverEmail.equals(currentEmail, false)
+                        ) {
+                            commentsList.add(comment)
+                        }
+                    }
+                }
+                Log.d("MYTAG", commentsList.size.toString())
+                _returnedComments.value = commentsList
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                _returnedComments.value = null
+                Toast.makeText(getApplication(), error.message, Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+
 
     private fun getCurrentTime(): String {
         val currentTime = LocalTime.now()

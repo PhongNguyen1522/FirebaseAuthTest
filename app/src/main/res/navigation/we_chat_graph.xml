@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeCommentFragment_to_detailCommentFragment"
             app:destination="@id/detailCommentFragment" />
+        <action
+            android:id="@+id/action_homeCommentFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2" />
     </fragment>
     <fragment
         android:id="@+id/detailCommentFragment"
@@ -23,4 +26,8 @@
             android:id="@+id/action_detailCommentFragment_to_homeCommentFragment"
             app:destination="@id/homeCommentFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.phongnn.firebaseloginsignup.ui.fragment.authen.HomeFragment"
+        android:label="HomeFragment" />
 </navigation>
